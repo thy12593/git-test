@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uulead.share.validate.dao.interf.IDepartmentMessageMapper">
+
+	
+	<select id="selectByIntervalTime" resultType="departmentMessage">
+	
+	SELECT * FROM department_message WHERE update_time &gt; NOW()-INTERVAL #{2} MINUTE  order by update_time desc limit #{0},#{1};
+		
+	</select>
+	
+	<!-- 除环保厅以外的部门异常信息 -->
+	<select id="selectBesidesHBTByIntervalTime" resultType="departmentMessage">
+		SELECT * FROM department_message WHERE department_id not in (2,6,7) and update_time &gt; NOW()-INTERVAL #{2} MINUTE  order by update_time desc limit #{0},#{1};
+	</select>
+	
+	<!-- 环保厅连接超时最新的一个程序 selectNewestTimeOutByIntervalTime-->
+	<select id="selectNewestTimeOutByIntervalTime" parameterType="java.lang.Integer" resultType="departmentMessage">
+		SELECT * FROM department_message 
+			<where>  
+				department_id in (2,6,7) AND error_type=1 
+				<if test="updateTime != null">
+					and update_time &gt; NOW()-INTERVAL #{updateTime} MINUTE 
+				</if>
+				<if test= "status != null">
+					and status = #{status}
+				</if>
+			</where>
+				order by update_time desc limit 0,1;
+	</select>
+	
+	<!-- 环保厅访问出错最新的一个程序 -->
+	<select id="selectNewestErrorByIntervalTime" resultType="departmentMessage">
+		SELECT * FROM department_message 
+			<where>	
+				department_id in (2,6,7) AND error_type=2 
+				<if test="updateTime != null">
+					and update_time &gt; NOW()-INTERVAL #{updateTime} MINUTE 
+				</if> 
+				<if test= "status != null">
+					and status = #{status}
+				</if>
+			</where>
+				order by update_time desc limit 0,1;
+	</select>
+	
+	<!-- 环保厅更新超时最新的一个程序-->
+	<select id="selectNewestDataOvertimeByIntervalTime" resultType="departmentMessage">
+		SELECT * FROM department_message WHERE 
+			department_id in (2,6,7) AND error_type=4 
+			<if test="updateTime != null">
+					and update_time &gt; NOW()-INTERVAL #{updateTime} MINUTE 
+			</if>  
+			<if test= "status != null">
+					and status = #{status}
+			</if>
+			order by update_time desc limit 0,1;
+	</select>
+
+</mapper>

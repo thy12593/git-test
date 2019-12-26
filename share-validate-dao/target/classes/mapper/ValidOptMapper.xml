@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uulead.share.validate.dao.interf.IValidOptMapper">
+
+	<select id="getLatestCreateTime" parameterType="java.lang.Integer"
+		resultType="java.util.Date">
+		SELECT Max(create_time)
+		FROM valid_opt
+		WHERE rule_id = #{id}
+	</select>
+
+	<select id="getCurrentTime" resultType="java.util.Date">
+		SELECT NOW()
+	</select>
+
+	<select id="getVaildLogById" resultMap="BaseResultMap">
+		SELECT *
+		FROM valid_opt
+		WHERE rule_id = #{id}
+		ORDER BY create_time DESC
+		LIMIT 0,1
+	</select>
+
+  <resultMap id="BaseResultMap" type="com.uulead.share.validate.dao.model.ValidOpt" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="rule_id" property="ruleId" jdbcType="INTEGER" />
+    <result column="valid_ret" property="validRet" jdbcType="BIT" />
+    <result column="is_time_out" property="isTimeOut" jdbcType="BIT" />
+    <result column="is_error_accur" property="isErrorAccur" jdbcType="BIT" />
+    <result column="valid_time" property="validTime" jdbcType="TIMESTAMP" />
+    <result column="valid_msg" property="validMsg" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+</mapper>
